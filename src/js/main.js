@@ -282,3 +282,13 @@ const footPrintByIdShow = () => {
         seeIdIssueFootPrint: true
     })
 }
+
+// Sign Out User
+const signOut = () => {
+    firebase.auth().signOut().then(function () {
+        window.location.href = "index.php"
+    }).catch(function (error) {
+        alert(error)
+    });
+
+}
