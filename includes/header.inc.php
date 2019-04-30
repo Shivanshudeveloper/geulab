@@ -19,6 +19,8 @@
     <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
     <!-- Alerts -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase.js"></script>
 </head>
 
 <body>

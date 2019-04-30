@@ -130,12 +130,12 @@ if (isset($_POST['searchFaculty'])) {
             echo '
             <br />
             <ul class="list-group">
-                <li class="list-group-item"><h5>Name:</h5> ' . $row['name'] . '</li>
+                <li class="list-group-item"><h5>Name:</h5> <span id="facultyName">' . $row['name'] . '</span></li>
                 <li class="list-group-item"><h5>UID:</h5> <span id="facultyUID">' . $row['uid'] . '</span></li>
                 <li class="list-group-item"><h5>ID:</h5><span id="facultyID"> ' . $row['id'] . '</span></li>
                 <li class="list-group-item"><h5>Email:</h5> ' . $row['email'] . '</li>
-                <li class="list-group-item"><h5>Contact:</h5> ' . $row['contact'] . '</li>
-                <li class="list-group-item"><h5>Department:</h5> ' . $row['department'] . '</li>
+                <li class="list-group-item"><h5>Contact:</h5><span id="facultyContact"> ' . $row['contact'] . '</span></li>
+                <li class="list-group-item"><h5>Department:</h5><span id="facultyDepartment"> ' . $row['department'] . '</span></li>
                 <li class="list-group-item"><h5>QTY:</h5> 
                     <input type="number" class="form-control" id="facultyIssueQty-txt" value=1  placeholder="QTY">
                 </li>
@@ -174,7 +174,7 @@ if (isset($_POST['showDetails'])) {
     $result = mysqli_query($conn, $sql);
     while ($row = mysqli_fetch_assoc($result)) {
         echo '
-            <h4 class="text-center mt-3">Item: '.$row['type'].' QTY: '.$row['qty'].' Will Be Issued To</h4>
+            <h4 class="text-center mt-3">UID:<span id="itemUid"> '.$row['uid']. '</span> Item: '.$row['type'].' QTY: '.$row['qty'].' Will Be Issued To</h4>
         ';
     }
 }
@@ -185,6 +185,9 @@ if (isset($_POST['facultyIssue'])) {
     $toBeIssuedQty = $_POST['qty'];
     $facultyID = $_POST['facultyID'];
     $facultyUID = $_POST['facultyUID'];
+    $facultyName = $_POST['facultyName'];
+    $facultyContact = $_POST['facultyContact'];
+    $facultyDepartment = $_POST['facultyDepartment'];
     $sql = "SELECT * FROM computer WHERE id = '$id';";
     $result = mysqli_query($conn, $sql);
     while ($row = mysqli_fetch_assoc($result)) {
@@ -222,7 +225,7 @@ if (isset($_POST['facultyIssue'])) {
         $itemQty -= 1;
         $sql = "UPDATE computer SET qty = '$itemQty' WHERE id = '$id';";
         mysqli_query($conn, $sql);
-        $sql = "INSERT INTO issue (faculty_id, faculty_uid, item_id, item_uid, issue_qty) VALUES ('$facultyID', '$facultyUID', '$id', '$itemUID', '$toBeIssuedQty');";
+        $sql = "INSERT INTO issue (faculty_id, faculty_uid, faculty_name, faculty_contact, faculty_department, item_id, item_uid, issue_qty) VALUES ('$facultyID', '$facultyUID', '$facultyName', '$facultyContact', '$facultyDepartment', '$id', '$itemUID', '$toBeIssuedQty');";
         mysqli_query($conn, $sql);
         echo '
         <br />
@@ -249,6 +252,9 @@ if (isset($_POST['seeAllIssue'])) {
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Faculty UID.</th>
+                <th scope="col">Faculty Name</th>
+                <th scope="col">Faculty Contact</th>
+                <th scope="col">Faculty Department</th>
                 <th scope="col">Item UID</th>
                 <th scope="col">Item Issued QTY.</th>
             </tr>
@@ -258,6 +264,9 @@ if (isset($_POST['seeAllIssue'])) {
             echo '
                     <tr>
                             <td>' . $row['faculty_uid'] . '</td>
+                            <td>' . $row['faculty_name'] . '</td>
+                            <td>' . $row['faculty_contact'] . '</td>
+                            <td>' . $row['faculty_department'] . '</td>
                             <td>' . $row['item_uid'] . '</td>
                             <td>' . $row['issue_qty'] . '</td>
                     </tr>
@@ -276,4 +285,56 @@ if (isset($_POST['seeAllIssue'])) {
             </div>
         ';
     }
+}
+// Add More Category
+if (isset($_POST['addCategory'])) {
+    $category = $_POST['category'];
+    $uid = uniqid().date("d-m-Y H:i:s");
+    $sql = "INSERT INTO hardware (category, uid) VALUES('$category', '$uid');";
+    mysqli_query($conn, $sql);
+}
+
+// FootPrinting Code
+if (isset($_POST['seeAllIssueFootPrint'])) {
+    $sql = "SELECT * FROM computer;";
+    $result = mysqli_query($conn, $sql);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $itemId = $row['id'];
+        $itemUID = $row['uid'];
+        $sql = "SELECT * FROM issue WHERE item_id = '$itemId';";
+        $result2 = mysqli_query($conn, $sql);
+        
+        while ($row2 = mysqli_fetch_assoc($result2)) {
+            echo '
+            <ul class="list-group">
+                <li class="list-group-item active"><h4>ID: ' . $itemId . '</h4><h4> UID: '.$itemUID.'</h4></li>
+                <li class="list-group-item">'.$row2['faculty_uid']. '</li>
+            </ul><br/><br/>
+            ';
+        }
+    }
+}
+// Footprint By Search Query
+if (isset($_POST['seeIdIssueFootPrint'])) {
+    $search_query = $_POST['id'];
+    $sql = "SELECT * FROM issue WHERE item_uid = '$search_query' || faculty_name = '$search_query' || faculty_uid = '$search_query';";
+    $result = mysqli_query($conn, $sql);
+    $resultChk = mysqli_num_rows($result);
+    if ($resultChk > 0) {
+        while ($row = mysqli_fetch_assoc($result)) { 
+            echo '
+            <ul class="list-group">
+                <li class="list-group-item active"><h4>ID: ' . $row['item_id'] . '</h4><h4> UID: '.$row['item_uid'].'</h4></li>
+                <li class="list-group-item">'.$row['faculty_uid']. '</li>
+            </ul><br/><br/>
+            ';
+        }
+    } else {
+        echo '
+            <div class="alert alert-danger" role="alert">
+                Oops! Nothing Found
+            </div>
+        ';
+    }
+    
 }

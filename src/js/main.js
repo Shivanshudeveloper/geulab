@@ -17,6 +17,8 @@ $(document).ready(() => {
         })
     } else if (page === "issue") {
         showItem()
+    } else if (page === "footprinting") {
+        showFootprinting()
     }
 })
 const processorButtons = (ibtn1, ibtn2, ibtn3, ibtn4, ibtn5, abtn1, abtn2, abtn3, abtn4, abtn5, otherbtn, pName) => {
@@ -181,6 +183,16 @@ const addFaculty = () => {
     swal("Done! Faculty Added", {
         icon: "success",
     });
+    var database = firebase.database()
+    var ref = database.ref('faculty')
+    var data = {
+        name: name,
+        id: id,
+        email: email,
+        contact: contact,
+        department: department
+    }
+    ref.push(data)
 }
 
 // Showing Items
@@ -202,18 +214,71 @@ const issueItemFaculty = () => {
     var qty = $("#facultyIssueQty-txt").val()
     var facultyUID = $("#facultyUID").html()
     var facultyID = $("#facultyID").html()
+    var facultyName = $("#facultyName").html()
+    var facultyContact = $("#facultyContact").html()
+    var facultyDepartment = $("#facultyDepartment").html()
+    var itemUid = $("#itemUid").html()
     $("#facultyDetails").load("../src/php/main.php", {
         id: id,
         qty: qty,
         facultyID: facultyID,
         facultyUID: facultyUID,
+        facultyName: facultyName,
+        facultyContact: facultyContact,
+        facultyDepartment: facultyDepartment,
         facultyIssue: true
     })
+    // Adding the footprint data
+    var database = firebase.database()
+    var ref = database.ref('footprint')
+    var data = {
+        ItemId: id,
+        ItemUid: itemUid,
+        ItemQty: qty,
+        facultyUID: facultyUID,
+        facultyName: facultyName,
+        facultyContact: facultyContact,
+        facultyDepartment: facultyDepartment
+    }
+    ref.push(data)
+    console.log("FootPrint Created")
 }
 
 // See All Issued Faculty Details
 const seeAllIssuedFaculty = () => {
     $("#root").load("../src/php/main.php", {
         seeAllIssue: true
+    })
+}
+// Add Category
+const addCategory = () => {
+    var category = $("#category-txt").val()
+    $.post("../src/php/main.php", {
+        category: category,
+        addCategory: true
+    })
+    swal("Done! Category Added", {
+        icon: "success",
+    });
+    $("#category-txt").val("")
+}
+
+const selectAdminCategory = () => {
+    var type = $("#adminCategory-select").val()
+    pcType = type
+}
+// Show FootPrinting
+const showFootprinting = () => {
+    $("#root").load("../src/php/main.php", {
+        seeAllIssueFootPrint: true
+    })
+}
+
+// Foot Print By ID Show
+const footPrintByIdShow = () => {
+    var id = $("#id-txt").val()
+    $("#root").load("../src/php/main.php", {
+        id: id,
+        seeIdIssueFootPrint: true
     })
 }

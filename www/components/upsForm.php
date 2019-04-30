@@ -18,8 +18,8 @@
     <input id="date" class="form-control" type="date" width="276" />
 </div>
 <div class="form-group">
-    <label for="exampleInputPassword1">Vander Name</label>
-    <input type="text" class="form-control" id="vanderName-txt" aria-describedby="emailHelp" placeholder="Vander Name">
+    <label for="exampleInputPassword1">Vender Name</label>
+    <input type="text" class="form-control" id="vanderName-txt" aria-describedby="emailHelp" placeholder="Vender Name">
 </div>
 <div class="form-group">
     <label for="exampleInputPassword1">QTY</label>

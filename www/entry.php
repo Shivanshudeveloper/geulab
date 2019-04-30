@@ -50,16 +50,36 @@ include_once '../includes/navbar.inc.php';
     <div class="text-center">
         <label>OR</label>
     </div>
+        
     <hr />
-    <select id="warrenty-select" class="browser-default custom-select">
-        <option value="" disabled>Choose option</option>
-        <option value="1 Year Warrenty" selected>1 Year Warrenty</option>
-        <option value="2 Year Warrenty">2 Year Warrenty</option>
-        <option value="3 Year Warrenty">3 Year Warrenty</option>
-        <option value="4 Year Warrenty">4 Year Warrenty</option>
-        <option value="5 Year Warrenty">5 Year Warrenty</option>
-    </select>
+    <?php
+    include_once '../src/php/dbh.php';
+    $sql = "SELECT * FROM hardware;";
+    $result = mysqli_query($conn, $sql);
+    echo '<div class="text-center">
+            <p>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Category Added By Admin
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                <select onclick="selectAdminCategory()" id="adminCategory-select" class="browser-default custom-select">
+                    <option value="" disabled>Choose option</option>
 
+        ';
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo '
+                <option value="' . $row['category'] . '">' . $row['category'] . '</option>
+            ';
+    }
+    echo '
+        </select>
+        </div>
+    </div>  
+    </div>
+        '
+    ?>
     <hr />
 
     <div id="categoryForm">
